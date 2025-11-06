@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: inventory_db
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    command: gunicorn inventory_service.wsgi:application --bind 0.0.0.0:8000 --workers 2
+    environment:
+      DJANGO_SETTINGS_MODULE: inventory_service.settings
+      DATABASE_URL: postgres://dev:dev@db:5432/inventory_db
+      PYTHONUNBUFFERED: "1"
+      # Optionally set RESERVATION_TTL_SECONDS
+      RESERVATION_TTL_SECONDS: "900"
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./seeds:/app/seeds
+
+volumes:
+  db_data:

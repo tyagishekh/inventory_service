@@ -1,0 +1,4 @@
+sku,warehouse,on_hand,reserved,low_stock_threshold,product_id
+SKU-AAA,WH-1,100,0,10,
+SKU-BBB,WH-1,5,0,5,
+SKU-CCC,WH-2,20,0,5,
