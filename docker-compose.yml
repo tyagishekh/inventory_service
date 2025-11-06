@@ -1,7 +1,9 @@
 version: "3.8"
+
 services:
   db:
     image: postgres:15
+    container_name: inventory_db
     environment:
       POSTGRES_DB: inventory_db
       POSTGRES_USER: dev
@@ -10,23 +12,29 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d inventory_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   web:
     build: .
-    command: gunicorn inventory_service.wsgi:application --bind 0.0.0.0:8000 --workers 2
+    container_name: inventory_service
     environment:
       DJANGO_SETTINGS_MODULE: inventory_service.settings
       DATABASE_URL: postgres://dev:dev@db:5432/inventory_db
       PYTHONUNBUFFERED: "1"
-      # Optionally set RESERVATION_TTL_SECONDS
       RESERVATION_TTL_SECONDS: "900"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "8000:8000"
     volumes:
       - .:/app
       - ./seeds:/app/seeds
+    entrypoint: ["/app/entrypoint.sh"]
 
 volumes:
   db_data:

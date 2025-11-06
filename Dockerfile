@@ -11,10 +11,16 @@ COPY pyproject.toml poetry.lock* /app/
 
 # install pip & deps (use pip for simplicity)
 COPY requirements.txt /app/
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && pip install -r requirements.txt
 
 COPY . /app
 
+# Entrypoint
+COPY entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
+
 EXPOSE 8000
-CMD ["gunicorn", "inventory_service.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2"]
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+# not needed as Entry point used CMD ["gunicorn", "inventory_service.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2"]
 

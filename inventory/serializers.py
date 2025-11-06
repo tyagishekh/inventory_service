@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Inventory, InventoryMovement, Reservation
 
 class InventorySerializer(serializers.ModelSerializer):
-    available = serializers.IntegerField(read_only=True, source='available')
+    #available = serializers.IntegerField(read_only=True, source='available')
 
     class Meta:
         model = Inventory
