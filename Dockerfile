@@ -7,7 +7,7 @@ WORKDIR /app
 # system deps
 RUN apt-get update && apt-get install -y build-essential libpq-dev wget ca-certificates --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-COPY pyproject.toml poetry.lock* /app/
+#COPY pyproject.toml poetry.lock* /app/
 
 # install pip & deps (use pip for simplicity)
 COPY requirements.txt /app/
